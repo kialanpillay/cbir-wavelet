@@ -41,14 +41,9 @@ def generate_feature(w, w_):
 
 
 def extract_submatrix(w, dim=(16, 16)):
-    if dim == (8, 8):
-        S1 = w[0:8, 0:8, 0]
-        S2 = w[0:8, 0:8, 1]
-        S3 = w[0:8, 0:8, 2]
-    else:
-        S1 = np.vstack([np.hstack((w[0:8, 0:8, 0], w[0:8, 8:16, 0])), np.hstack((w[8:16, 0:8, 0], w[8:16, 8:16, 0]))])
-        S2 = np.vstack([np.hstack((w[0:8, 0:8, 1], w[0:8, 8:16, 1])), np.hstack((w[8:16, 0:8, 1], w[8:16, 8:16, 1]))])
-        S3 = np.vstack([np.hstack((w[0:8, 0:8, 2], w[0:8, 8:16, 2])), np.hstack((w[8:16, 0:8, 2], w[8:16, 8:16, 2]))])
+    S1 = w[0:dim[0], 0:dim[1], 0]
+    S2 = w[0:dim[0], 0:dim[1], 1]
+    S3 = w[0:dim[0], 0:dim[1], 2]
     return np.dstack((S1, S2, S3))
 
 
@@ -66,7 +61,7 @@ def match(s, s_, beta=0.5):
         return False
 
 
-def dist(w, w_, weights_jk=np.array([[1, 1], [1, 1]]), weights_c=(1, 1, 1)):
+def dist(w, w_, weights_jk=np.array([[1, 1], [1, 1]]), weights_c=np.array([1, 1, 1])):
     D1 = 0
     for i in range(3):
         D1 += weights_c[i] * np.linalg.norm(w[0:8, 0:8, i] - w_[0:8, 0:8, i])
