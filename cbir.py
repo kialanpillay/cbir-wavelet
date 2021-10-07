@@ -29,14 +29,14 @@ def wavelet_transform(c, level):
 
 
 def fwt(c, level=3):
-    WC1, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 0], wavelet='db8', level=level, mode='periodization'))
-    WC2, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 1], wavelet='db8', level=level, mode='periodization'))
-    WC3, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 2], wavelet='db8', level=level, mode='periodization'))
+    WC1, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 0], wavelet='db4', level=level, mode='periodization'))
+    WC2, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 1], wavelet='db4', level=level, mode='periodization'))
+    WC3, _ = pywt.coeffs_to_array(pywt.wavedec2(c[:, :, 2], wavelet='db4', level=level, mode='periodization'))
     return np.dstack((WC1, WC2, WC3))
 
 
 def generate_feature(w, w_):
-    return np.array([extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w), compute_standard_deviation(w)],
+    return np.array([compute_standard_deviation(w), extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w)],
                     dtype=object)
 
 
