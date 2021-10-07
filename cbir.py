@@ -36,7 +36,8 @@ def fwt(c, level=3):
 
 
 def generate_feature(w, w_):
-    return np.array([extract_submatrix(w_, dim=(8,8)), extract_submatrix(w), compute_standard_deviation(w)], dtype=object)
+    return np.array([extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w), compute_standard_deviation(w)],
+                    dtype=object)
 
 
 def extract_submatrix(w, dim=(16, 16)):

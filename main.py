@@ -2,9 +2,9 @@ import argparse
 
 import cv2
 
+import utils
 from db import Database
 from pipeline import Pipeline
-import utils
 
 WINDOW_NAME = "CBIR"
 
