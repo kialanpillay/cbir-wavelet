@@ -22,6 +22,7 @@ def app():
     print("-" * 50)
     print()
 
+    query_img = None
     if os.path.isfile(os.path.join(args.dirname, args.query)):
         query_img = utils.read(args.dirname, args.query)
         cv2.imshow(WINDOW_NAME, query_img)
@@ -33,7 +34,7 @@ def app():
 
     print("Building pipeline...")
     t1 = time.time()
-    pipeline = Pipeline(args.threshold)
+    pipeline = Pipeline(args.threshold, args.vertical, args.horizontal, args.diagonal, args.color, args.scale)
     t2 = time.time()
     system_time(t1, t2)
 
@@ -55,7 +56,7 @@ def app():
         t1 = time.time()
         for k, v in db.items():
             dist = pipeline.filter_(Q, v)
-            matches.append((dist, k))
+            matches.append((k, dist))
         t2 = time.time()
         system_time(t1, t2)
 
@@ -63,21 +64,22 @@ def app():
         print("{} Query Results - Best {} Matches ".format(args.query[0:args.query.index('.')], args.matches))
         print("-" * 50)
         print("{0:<6} {1:<20} {2:<6}".format("Rank", "Image", "Dist"))
-        for n, (d, f) in enumerate(sorted(matches, key=lambda x: x[0])):
-            print("{0:<6} {1:<20} {2:<05.2f}".format(n, f, d))
-            if n > args.matches - 1:
+
+        if not os.path.isdir(output_dir(args.dirname)):
+            os.mkdir(output_dir(args.dirname))
+        else:
+            [os.remove(os.path.join(output_dir(args.dirname), f)) for f in os.listdir(output_dir(args.dirname))
+             if f.endswith(".jpg")]
+
+        for n, (f, d) in enumerate(sorted(matches, key=lambda x: x[1])):
+            print("{0:<6} {1:<20} {2:<05.2f}".format(n + 1, f, d))
+            utils.write(args.dirname + "_out", f)
+            if n > (args.matches - 1):
                 break
 
 
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+def output_dir(dirname):
+    return dirname + "_out"
 
 
 def system_time(t1, t2):
@@ -94,6 +96,11 @@ if __name__ == '__main__':
     parser.add_argument('--matches', type=int, default=10, help="Number of matches to return")
     parser.add_argument('--delay', type=int, default=3000, help="OpenCV window millisecond delay")
     parser.add_argument('--threshold', type=int, default=30000, help="Euclidean distance threshold")
-    parser.add_argument('--test', type=str2bool, default=False, help="Evaluation mode")
+    parser.add_argument('--test', action='store_true', help="Evaluation mode")
+    parser.add_argument('--vertical', action='store_true', help="Emphasise vertical image detail")
+    parser.add_argument('--horizontal', action='store_true', help="Emphasise horizontal image detail")
+    parser.add_argument('--diagonal', action='store_true', help="Emphasise diagonal image detail")
+    parser.add_argument('--color', action='store_true', help="Emphasise color variation")
+    parser.add_argument('--scale', type=float, default=1.5, help="Weight scaling factor")
     args = parser.parse_args()
     app()
