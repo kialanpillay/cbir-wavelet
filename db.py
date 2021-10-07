@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-import pipeline
+from pipeline import Pipeline
 from utils import read
 
 
@@ -12,6 +12,7 @@ class Database:
         self.dirname = dirname
         self.dbname = dbname
         self.db = {}
+        self.pipeline = Pipeline(0)
         self.load()
 
     def load(self):
@@ -23,7 +24,7 @@ class Database:
     def generate(self):
         for n, f in enumerate(sorted(os.listdir(self.dirname))):
             if fnmatch.fnmatch(f, '*.jpg'):
-                feature_vector = pipeline.pipe(read(self.dirname, f))
+                feature_vector = self.pipeline.pipe(read(self.dirname, f))
                 self.db[f[0:f.index('.')]] = feature_vector
 
         np.savez(self.dbname, self.db, **self.db)
