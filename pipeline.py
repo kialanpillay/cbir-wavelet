@@ -14,8 +14,8 @@ class Pipeline:
         return cbir.generate_feature(W, W_)
 
     def filter_(self, f, f_):
-        if cbir.match(f[2], f_[2]):
-            dist = cbir.dist(f[0], f_[0])
+        if cbir.match(f[0], f_[0]):
+            dist = cbir.dist(f[1], f_[1])
             if dist < self.threshold:
-                return cbir.dist(f[1], f_[1])
+                return cbir.dist(f[2], f_[2])
         return np.Inf
