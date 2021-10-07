@@ -1,10 +1,9 @@
 import argparse
-import os
 
 import cv2
 
 from db import Database
-import pipeline
+from pipeline import Pipeline
 import utils
 
 WINDOW_NAME = "CBIR"
@@ -16,12 +15,13 @@ def app():
     cv2.waitKey(args.delay)
     cv2.destroyAllWindows()
 
+    pipeline = Pipeline(args.threshold)
     Q = pipeline.pipe(query_img)
     db = Database(args.dirname, args.dbname).open()
 
     if args.test:
         matches = []
-        for k, v in range(db.items()):
+        for k, v in db.items():
             dist = pipeline.filter_(Q, v)
             matches.append((dist, k))
 
@@ -49,6 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--query', type=str, default='arborgreens01.jpg', help="Query image filename")
     parser.add_argument('--matches', type=int, default=10, help="Number of matches to return")
     parser.add_argument('--delay', type=int, default=3000, help="OpenCV window millisecond delay")
+    parser.add_argument('--threshold', type=int, default=30000, help="Euclidean distance threshold")
     parser.add_argument('--test', type=str2bool, default=False, help="Evaluation mode")
     args = parser.parse_args()
     app()
