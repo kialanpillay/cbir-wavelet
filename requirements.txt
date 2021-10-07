@@ -1,4 +1,5 @@
 argparse
+art
 matplotlib
 numpy
 opencv-python
