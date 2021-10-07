@@ -1,7 +1,7 @@
 import argparse
-import os.path
+import os
+import time
 
-import art
 import cv2
 from art import tprint
 
@@ -32,21 +32,34 @@ def app():
         exit(1)
 
     print("Building pipeline...")
+    t1 = time.time()
     pipeline = Pipeline(args.threshold)
+    t2 = time.time()
+    system_time(t1, t2)
+
     print("Forming feature vector...")
+    t1 = time.time()
     Q = pipeline.pipe(query_img)
+    t2 = time.time()
+    system_time(t1, t2)
+
     print("Loading feature vector database...")
+    t1 = time.time()
     db = Database(args.dirname, args.dbname).open()
+    t2 = time.time()
+    system_time(t1, t2)
 
     if args.test:
         matches = []
         print("Performing three-stage comparison...")
+        t1 = time.time()
         for k, v in db.items():
             dist = pipeline.filter_(Q, v)
             matches.append((dist, k))
+        t2 = time.time()
+        system_time(t1, t2)
 
-        print("CBIR - Displaying final results...")
-        print()
+        print("Displaying final query results...\n")
         print("{} Query Results - Best {} Matches ".format(args.query[0:args.query.index('.')], args.matches))
         print("-" * 50)
         print("{0:<6} {1:<20} {2:<6}".format("Rank", "Image", "Dist"))
@@ -65,6 +78,12 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def system_time(t1, t2):
+    hours, rem = divmod(t2 - t1, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("{:0>2}:{:0>2}:{:05.2f}\n".format(int(hours), int(minutes), seconds))
 
 
 if __name__ == '__main__':
