@@ -16,8 +16,8 @@ class Database:
         self.load()
 
     def load(self):
-        if os.path.isfile(self.dbname):
-            self.db = np.load(self.dbname)
+        if os.path.isfile(self.dbname + ".npz"):
+            self.db = np.load(self.dbname + ".npz", allow_pickle=True)
         else:
             self.generate()
 
