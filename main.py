@@ -29,7 +29,7 @@ def app():
         cv2.waitKey(args.delay)
         cv2.destroyAllWindows()
     else:
-        print("CBIR - {} not found...".format(args.query))
+        print("{} not found...".format(args.query))
         exit(1)
 
     print("Building pipeline...")
@@ -65,7 +65,7 @@ def app():
         print("Displaying final query results...\n")
         print("{} Query Results - Best {} Matches ".format(args.query[0:args.query.index('.')], args.matches))
         print("-" * 50)
-        print("{0:<6} {1:<20} {2:<6}".format("Rank", "Image", "Dist"))
+        print("{0:<6} {1:<25} {2:<6}".format("Rank", "Image", "Dist"))
 
         if not os.path.isdir(output_dir(args.dirname)):
             os.mkdir(output_dir(args.dirname))
