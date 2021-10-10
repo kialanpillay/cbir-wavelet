@@ -1,5 +1,6 @@
 import numpy as np
 import pywt
+from sklearn.decomposition import PCA
 
 from utils import resize
 
@@ -35,9 +36,14 @@ def fwt(c, level=3):
     return np.dstack((WC1, WC2, WC3))
 
 
-def generate_feature(w, w_):
-    return np.array([compute_standard_deviation(w), extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w)],
-                    dtype=object)
+def generate_feature(w, w_, pca=False):
+    if pca:
+        return dimensionality_reduction(
+            np.array([compute_standard_deviation(w), extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w)],
+                     dtype=object))
+    else:
+        return np.array([compute_standard_deviation(w), extract_submatrix(w_, dim=(8, 8)), extract_submatrix(w)],
+                        dtype=object)
 
 
 def extract_submatrix(w, dim=(16, 16)):
@@ -75,3 +81,14 @@ def dist(w, w_, weights_jk=np.array([[1, 1], [1, 1]]), weights_c=np.array([1, 1,
     for i in range(3):
         D4 += weights_c[i] * np.linalg.norm(w[8:16, 8:16, i] - w_[8:16, 8:16, i])
     return weights_jk[0, 0] * D1 + weights_jk[0, 1] * D2 + weights_jk[1, 0] * D3 + weights_jk[1, 1] * D4
+
+
+def dimensionality_reduction(f, n_components=2):
+    pca = PCA(n_components=n_components)
+    for i in [1, 2]:
+        f_ = np.zeros(shape=(n_components, f[i].shape[1], f[i].shape[2]))
+        for d in range(f[i].shape[2]):
+            pca.fit(f[i][:, :, d])
+            f_[:, :, d] = pca.components_
+        f[i] = f_
+    return f
