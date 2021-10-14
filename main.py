@@ -46,21 +46,30 @@ def app():
 
     print("Loading feature vector database...")
     t1 = time.time()
-    db = Database(args.dirname, args.dbname).open()
+    db = Database(args.dirname, args.dbname)
     t2 = time.time()
     system_time(t1, t2)
 
     if args.test:
         matches = []
         print("Performing three-stage comparison...")
-        t1 = time.time()
-        for k, v in db.items():
-            if k == 'arr_0':
-                continue
-            dist = pipeline.filter_(Q, v)
-            matches.append((k, dist))
-        t2 = time.time()
-        system_time(t1, t2)
+        if args.kdtree:
+            t1 = time.time()
+            dist, ind = db.tree.query(Q[2].flatten().reshape(1, -1), k=args.matches)
+            dist = dist[0]
+            ind = ind[0]
+            t2 = time.time()
+            system_time(t1, t2)
+        else:
+            t1 = time.time()
+            for k, v in db.open().items():
+                if k == 'arr_0':
+                    continue
+                dist = pipeline.filter_(Q, v)
+                matches.append((k, dist))
+            t2 = time.time()
+            system_time(t1, t2)
+
 
         print("Displaying final query results...\n")
         print("{} Query Results - Best {} Matches ".format(args.query[0:args.query.index('.')], args.matches))
@@ -73,11 +82,19 @@ def app():
             [os.remove(os.path.join(output_dir(args.dirname), f)) for f in os.listdir(output_dir(args.dirname))
              if f.endswith(".jpg")]
 
-        for n, (file, dist) in enumerate(sorted(matches, key=lambda x: x[1])):
-            print("{0:<6} {1:<25} {2:<05.2f}".format(n + 1, file, dist))
-            utils.write(args.dirname + "_out", file)
-            if n > (args.matches - 1):
-                break
+        if args.kdtree:
+            for n, index in enumerate(ind):
+                file = list(db.open().keys())[index]
+                print("{0:<6} {1:<25} {2:<05.2f}".format(n + 1, file, dist[n]))
+                utils.write(args.dirname + "_out", file)
+                if n > (args.matches - 1):
+                    break
+        else:
+            for n, (file, dist) in enumerate(sorted(matches, key=lambda x: x[1])):
+                print("{0:<6} {1:<25} {2:<05.2f}".format(n + 1, file, dist))
+                utils.write(args.dirname + "_out", file)
+                if n > (args.matches - 1):
+                    break
 
 
 def output_dir(dirname):
@@ -105,5 +122,6 @@ if __name__ == '__main__':
     parser.add_argument('--color', action='store_true', help="Emphasise color variation")
     parser.add_argument('--scale', type=float, default=1.5, help="Weight scaling factor")
     parser.add_argument('--pca', action='store_true', help="Perform feature dimensionality reduction")
+    parser.add_argument('--kdtree', action='store_true', help="Perform feature dimensionality reduction")
     args = parser.parse_args()
     app()
