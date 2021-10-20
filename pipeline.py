@@ -12,12 +12,13 @@ class Pipeline:
         self.color = color
         self.w_jk = np.array([[1, 1], [1, 1]], dtype=np.float32)
         self.w_c = np.array([1, 1, 1], dtype=np.float32)
+        self.decomposition_levels = np.array([3, 4], dtype=np.float32)
         self.adjust_weights(scale)
 
-    def pipe(self, img):
+    def process(self, img):
         C = cbir.preprocess(img)
-        W = cbir.wavelet_transform(C, 3)
-        W_ = cbir.wavelet_transform(C, 4)
+        W = cbir.wavelet_transform(C, self.decomposition_levels[0])
+        W_ = cbir.wavelet_transform(C, self.decomposition_levels[1])
         return cbir.generate_feature(W, W_)
 
     def filter_(self, f, f_):

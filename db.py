@@ -33,7 +33,7 @@ class Database:
     def generate(self):
         for n, f in enumerate(sorted(os.listdir(self.dirname))):
             if fnmatch.fnmatch(f, '*.jpg'):
-                feature_vector = self.pipeline.pipe(read(self.dirname, f))
+                feature_vector = self.pipeline.process(read(self.dirname, f))
                 self.db[f[0:f.index('.')]] = feature_vector
 
         np.savez(self.dbname, self.db, **self.db)

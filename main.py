@@ -40,7 +40,7 @@ def app():
 
     print("Forming feature vector...")
     t1 = time.time()
-    Q = pipeline.pipe(query_img)
+    Q = pipeline.process(query_img)
     t2 = time.time()
     system_time(t1, t2)
 
