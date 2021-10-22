@@ -70,7 +70,6 @@ def app():
             t2 = time.time()
             system_time(t1, t2)
 
-
         print("Displaying final query results...\n")
         print("{} Query Results - Best {} Matches ".format(args.query[0:args.query.index('.')], args.matches))
         print("-" * 50)
