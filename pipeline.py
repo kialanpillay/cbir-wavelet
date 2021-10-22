@@ -4,22 +4,24 @@ import cbir
 
 
 class Pipeline:
-    def __init__(self, threshold=30000, vertical=False, horizontal=False, diagonal=False, color=False, scale=1.5):
+    def __init__(self, threshold=30000, vertical=False, horizontal=False, diagonal=False, color=False, scale=1.5,
+                 pca=False):
         self.threshold = threshold
         self.vertical = vertical
         self.horizontal = horizontal
         self.diagonal = diagonal
         self.color = color
+        self.pca = pca
         self.w_jk = np.array([[1, 1], [1, 1]], dtype=np.float32)
         self.w_c = np.array([1, 1, 1], dtype=np.float32)
-        self.decomposition_levels = np.array([3, 4], dtype=np.float32)
+        self.decomposition_levels = np.array([3, 4], dtype=np.int)
         self.adjust_weights(scale)
 
     def process(self, img):
         C = cbir.preprocess(img)
         W = cbir.wavelet_transform(C, self.decomposition_levels[0])
         W_ = cbir.wavelet_transform(C, self.decomposition_levels[1])
-        return cbir.generate_feature(W, W_)
+        return cbir.generate_feature(W, W_, self.pca)
 
     def filter_(self, f, f_):
         if cbir.match(f[0], f_[0]):

@@ -34,7 +34,7 @@ def app():
 
     print("Building pipeline...")
     t1 = time.time()
-    pipeline = Pipeline(args.threshold, args.vertical, args.horizontal, args.diagonal, args.color, args.scale)
+    pipeline = Pipeline(args.threshold, args.vertical, args.horizontal, args.diagonal, args.color, args.scale, args.pca)
     t2 = time.time()
     system_time(t1, t2)
 
@@ -46,7 +46,7 @@ def app():
 
     print("Loading feature vector database...")
     t1 = time.time()
-    db = Database(args.dirname, args.dbname)
+    db = Database(args.dirname, args.dbname, args.pca)
     t2 = time.time()
     system_time(t1, t2)
 
