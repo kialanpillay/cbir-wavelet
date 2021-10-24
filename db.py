@@ -10,6 +10,16 @@ from utils import read
 
 class Database:
     def __init__(self, dirname, dbname, pca):
+        """
+        Parameters
+        ----------
+        dirname : str
+           Directory name
+        dbname : str
+           Database name
+        pca : bool
+           Perform PCA
+        """
         self.dirname = dirname
         self.dbname = dbname
         self.pca = pca
@@ -19,6 +29,10 @@ class Database:
         self.load()
 
     def load(self):
+        """
+        Loads the image feature vector database from a .npz file.
+        Constructs a KDTree from the flattened 16 x 16 x 3 feature vectors.
+        """
         if os.path.isfile(self.dbname + ".npz") and self.pca is False:
             self.db = np.load(self.dbname + ".npz", allow_pickle=True)
             X = np.array(np.zeros(shape=(len(self.db.keys()) - 1, 16 * 16 * 3)))
@@ -41,6 +55,9 @@ class Database:
             self.generate()
 
     def generate(self):
+        """
+        Generates the image feature vector database using Pipeline and saves to disk
+        """
         for n, f in enumerate(sorted(os.listdir(self.dirname))):
             if fnmatch.fnmatch(f, '*.jpg'):
                 feature_vector = self.pipeline.process(read(self.dirname, f))
@@ -53,4 +70,11 @@ class Database:
         np.savez(file, self.db, **self.db)
 
     def open(self):
+        """
+        Returns the image feature vector database
+
+        Returns
+        -------
+        dict
+        """
         return self.db

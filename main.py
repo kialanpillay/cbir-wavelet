@@ -34,7 +34,8 @@ def app():
 
     print("Building pipeline...")
     t1 = time.time()
-    pipeline = Pipeline(args.threshold, args.vertical, args.horizontal, args.diagonal, args.color, args.scale, args.pca)
+    pipeline = Pipeline(args.threshold, args.vertical, args.horizontal, args.diagonal, args.intensity, args.scale,
+                        args.pca)
     t2 = time.time()
     system_time(t1, t2)
 
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     parser.add_argument('--vertical', action='store_true', help="Emphasise vertical image detail")
     parser.add_argument('--horizontal', action='store_true', help="Emphasise horizontal image detail")
     parser.add_argument('--diagonal', action='store_true', help="Emphasise diagonal image detail")
-    parser.add_argument('--color', action='store_true', help="Emphasise color variation")
+    parser.add_argument('--intensity', action='store_true', help="Emphasise intensity variation")
     parser.add_argument('--scale', type=float, default=1.5, help="Weight scaling factor")
     parser.add_argument('--pca', action='store_true', help="Perform feature dimensionality reduction")
     parser.add_argument('--kdtree', action='store_true', help="Store features in K-d tree")
