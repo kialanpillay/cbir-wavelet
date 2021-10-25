@@ -70,9 +70,9 @@ class Pipeline:
         numpy.float32
         """
         if cbir.match(f[0], f_[0]):
-            dist = cbir.dist(f[1], f_[1], weights_jk=self.w_jk, weights_c=self.w_c)
+            dist = cbir.angle_dist(f[1], f_[1], weights_jk=self.w_jk, weights_c=self.w_c)
             if dist < self.threshold:
-                return cbir.dist(f[2], f_[2], weights_jk=self.w_jk, weights_c=self.w_c)
+                return cbir.angle_dist(f[2], f_[2], weights_jk=self.w_jk, weights_c=self.w_c)
         return np.Inf
 
     def adjust_weights(self, scale):

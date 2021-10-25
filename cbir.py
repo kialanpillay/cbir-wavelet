@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pywt
 from sklearn.decomposition import PCA
@@ -92,3 +94,35 @@ def dimensionality_reduction(f, n_components=2):
             f_[:, :, d] = pca.components_
         f[i] = f_
     return f
+
+
+def angle_dist(w, w_, weights_jk=np.array([[1, 1], [1, 1]]), weights_c=np.array([1, 1, 1])):
+    D1 = 0
+    for i in range(3):
+        a = np.inner(w[0:8, 0:8, i].flatten(), w_[0:8, 0:8, i].flatten())
+        b = np.linalg.norm(
+            w[0:8, 0:8, i].flatten(), ord=1) * np.linalg.norm(w_[0:8, 0:8, i].flatten(), ord=1)
+        D1 += weights_c[i] * np.arccos(a/b)
+    D2 = 0
+    D3 = 0
+    D4 = 0
+    if w.shape[0] == 16:
+        for i in range(3):
+            a = np.inner(w[0:8, 8:16, i].flatten(), w_[0:8, 8:16, i].flatten())
+            b = np.linalg.norm(
+                w[0:8, 8:16, i].flatten(), ord=1) * np.linalg.norm(w_[0:8, 8:16, i].flatten(), ord=1)
+            print(np.arccos(a/b))
+            D2 += weights_c[i] * np.arccos(a / b)
+        for i in range(3):
+            a = np.inner(w[8:16, 0:8, i].flatten(), w_[8:16, 0:8, i].flatten())
+            b = np.linalg.norm(
+                w[8:16, 0:8, i].flatten(), ord=1) * np.linalg.norm(w_[8:16, 0:8, i].flatten(), ord=1)
+            print(np.arccos(a / b))
+            D3 += weights_c[i] * np.arccos(a / b)
+        for i in range(3):
+            a = np.inner(w[8:16, 8:16, i].flatten(), w_[8:16, 8:16, i].flatten())
+            b = np.linalg.norm(
+                w[8:16, 8:16, i].flatten(), ord=1) * np.linalg.norm(w_[8:16, 8:16, i].flatten(), ord=1)
+            print(np.arccos(a / b))
+            D4 += weights_c[i] * np.arccos(a / b)
+    return weights_jk[0, 0] * D1 + weights_jk[0, 1] * D2 + weights_jk[1, 0] * D3 + weights_jk[1, 1] * D4
