@@ -41,12 +41,12 @@ class Pipeline:
 
         Parameters
         ----------
-        img : numpy.array
+        img : numpy.ndarray
            Image data
 
         Returns
         -------
-        numpy.array
+        numpy.ndarray
         """
         C = cbir.preprocess(img)
         W = cbir.wavelet_transform(C, self.decomposition_levels[0])
@@ -60,9 +60,9 @@ class Pipeline:
 
         Parameters
         ----------
-        f : numpy.array
+        f : numpy.ndarray
            Query image feature
-        f_ : numpy.array
+        f_ : numpy.ndarray
             Database image feature
 
         Returns

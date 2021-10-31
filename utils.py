@@ -66,7 +66,7 @@ def write(dirname, filename, img=None):
        Directory name
     filename : str
        Filename
-    img : numpy.array, optional
+    img : numpy.ndarray, optional
         Image data
     """
     if img is not None:
