@@ -85,12 +85,14 @@ def app():
         for n, index in enumerate(ind):
             file = list(db.open().keys())[index]
             print("{0:<6} {1:<25} {2:<05.2f}".format(n + 1, file, dist[n]))
+            utils.display(args.dirname, file)
             utils.write(args.dirname + "_out", file)
             if n > (args.matches - 2):
                 break
     else:
         for n, (file, dist) in enumerate(sorted(matches, key=lambda x: x[1])):
             print("{0:<6} {1:<25} {2:<05.2f}".format(n + 1, file, dist))
+            utils.display(args.dirname, file)
             utils.write(args.dirname + "_out", file)
             if n > (args.matches - 2):
                 break
